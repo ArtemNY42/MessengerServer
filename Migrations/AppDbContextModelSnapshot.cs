@@ -24,75 +24,92 @@ namespace MessengerServer.Migrations
 
             modelBuilder.Entity("ChatUser", b =>
                 {
-                    b.Property<int>("ChatsChatId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ChatsId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ParticipantsUserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ParticipantsId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("ChatsChatId", "ParticipantsUserId");
+                    b.HasKey("ChatsId", "ParticipantsId");
 
-                    b.HasIndex("ParticipantsUserId");
+                    b.HasIndex("ParticipantsId");
 
-                    b.ToTable("ChatUser", (string)null);
+                    b.ToTable("ChatUser");
                 });
 
             modelBuilder.Entity("MessengerServer.Models.Chat", b =>
                 {
-                    b.Property<int>("ChatId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ChatId"));
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("ChatId");
+                    b.HasKey("Id");
 
-                    b.ToTable("Chats", (string)null);
+                    b.ToTable("Chats");
                 });
 
             modelBuilder.Entity("MessengerServer.Models.Message", b =>
                 {
-                    b.Property<int>("MessageId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MessageId"));
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("SentAt")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<bool>("IsChecked")
+                        .HasColumnType("boolean");
 
-                    b.HasKey("MessageId");
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsForwarded")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ChatId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("MessengerServer.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -100,22 +117,25 @@ namespace MessengerServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("UserId");
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.ToTable("Users", (string)null);
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ChatUser", b =>
                 {
                     b.HasOne("MessengerServer.Models.Chat", null)
                         .WithMany()
-                        .HasForeignKey("ChatsChatId")
+                        .HasForeignKey("ChatsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MessengerServer.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("ParticipantsUserId")
+                        .HasForeignKey("ParticipantsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -128,15 +148,15 @@ namespace MessengerServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MessengerServer.Models.User", "User")
+                    b.HasOne("MessengerServer.Models.User", "Sender")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chat");
 
-                    b.Navigation("User");
+                    b.Navigation("Sender");
                 });
 #pragma warning restore 612, 618
         }

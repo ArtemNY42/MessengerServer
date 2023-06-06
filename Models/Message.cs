@@ -6,22 +6,29 @@ namespace MessengerServer.Models
    public class Message
     {
         [Key]
-        public int MessageId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Content { get; set; }
 
         [Required]
-        public DateTime SentAt { get; set; }
+        public DateTime CreateDate { get; set; }
 
-        // Define the relationship with the User
         [Required]
-        public int UserId { get; set; }
-        public User? User { get; set; }
+        public Guid SenderId { get; set; }
+        public User Sender { get; set; }
 
-        // Define the relationship with the Chat
         [Required]
-        public int ChatId { get; set; }
-        public Chat? Chat { get; set; }
+        public Guid ChatId { get; set; }
+        public Chat Chat { get; set; }
+
+        [Required]
+        public bool IsChecked { get; set; }
+
+        [Required]
+        public bool IsDelivered { get; set; }
+
+        [Required]
+        public bool IsForwarded { get; set; }
     }
 }

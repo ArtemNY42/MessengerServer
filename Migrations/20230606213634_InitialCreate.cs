@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -16,50 +15,53 @@ namespace MessengerServer.Migrations
                 name: "Chats",
                 columns: table => new
                 {
-                    ChatId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DateCreate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chats", x => x.ChatId);
+                    table.PrimaryKey("PK_Chats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ChatUser",
                 columns: table => new
                 {
-                    ChatsChatId = table.Column<int>(type: "integer", nullable: false),
-                    ParticipantsUserId = table.Column<int>(type: "integer", nullable: false)
+                    ChatsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParticipantsId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatUser", x => new { x.ChatsChatId, x.ParticipantsUserId });
+                    table.PrimaryKey("PK_ChatUser", x => new { x.ChatsId, x.ParticipantsId });
                     table.ForeignKey(
-                        name: "FK_ChatUser_Chats_ChatsChatId",
-                        column: x => x.ChatsChatId,
+                        name: "FK_ChatUser_Chats_ChatsId",
+                        column: x => x.ChatsId,
                         principalTable: "Chats",
-                        principalColumn: "ChatId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ChatUser_Users_ParticipantsUserId",
-                        column: x => x.ParticipantsUserId,
+                        name: "FK_ChatUser_Users_ParticipantsId",
+                        column: x => x.ParticipantsId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -67,34 +69,36 @@ namespace MessengerServer.Migrations
                 name: "Messages",
                 columns: table => new
                 {
-                    MessageId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ChatId = table.Column<int>(type: "integer", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ChatId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsChecked = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDelivered = table.Column<bool>(type: "boolean", nullable: false),
+                    IsForwarded = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.MessageId);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Messages_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
-                        principalColumn: "ChatId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Messages_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Messages_Users_SenderId",
+                        column: x => x.SenderId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatUser_ParticipantsUserId",
+                name: "IX_ChatUser_ParticipantsId",
                 table: "ChatUser",
-                column: "ParticipantsUserId");
+                column: "ParticipantsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ChatId",
@@ -102,9 +106,9 @@ namespace MessengerServer.Migrations
                 column: "ChatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_UserId",
+                name: "IX_Messages_SenderId",
                 table: "Messages",
-                column: "UserId");
+                column: "SenderId");
         }
 
         /// <inheritdoc />

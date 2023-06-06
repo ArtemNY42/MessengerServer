@@ -28,7 +28,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Message>> GetMessageById(int id)
+        public async Task<ActionResult<Message>> GetMessageById(Guid id)
         {
             var message = await _messengerRepository.GetMessageByIdAsync(id);
 
@@ -41,7 +41,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByUserId(Guid userId)
         {
             var messages = await _messengerRepository.GetMessagesByUserIdAsync(userId);
             return Ok(messages);
@@ -51,13 +51,13 @@ namespace MessengerServer.Controllers
         public async Task<ActionResult<Message>> CreateMessage(Message message)
         {
             var createdMessage = await _messengerRepository.CreateMessageAsync(message);
-            return CreatedAtAction(nameof(GetMessageById), new { id = createdMessage.MessageId }, createdMessage);
+            return CreatedAtAction(nameof(GetMessageById), new { id = createdMessage.Id }, createdMessage);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMessage(int id, Message message)
+        public async Task<IActionResult> UpdateMessage(Guid id, Message message)
         {
-            if (id != message.MessageId)
+            if (id != message.Id)
             {
                 return BadRequest();
             }
@@ -68,7 +68,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMessage(int id)
+        public async Task<IActionResult> DeleteMessage(Guid id)
         {
             var messageExists = _messengerRepository.MessageExists(id);
             if (!messageExists)

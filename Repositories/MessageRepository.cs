@@ -22,14 +22,14 @@ namespace MessengerServer.Repositories
             return await _dbContext.Messages.ToListAsync();
         }
 
-        public async Task<Message> GetMessageByIdAsync(int id)
+        public async Task<Message> GetMessageByIdAsync(Guid id)
         {
             return await _dbContext.Messages.FindAsync(id);
         }
 
-        public async Task<List<Message>> GetMessagesByUserIdAsync(int userId)
+        public async Task<List<Message>> GetMessagesByUserIdAsync(Guid userId)
         {
-            return await _dbContext.Messages.Where(m => m.UserId == userId).ToListAsync();
+            return await _dbContext.Messages.Where(m => m.Id == userId).ToListAsync();
         }
 
         public async Task<Message> CreateMessageAsync(Message message)
@@ -45,7 +45,7 @@ namespace MessengerServer.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteMessageAsync(int id)
+        public async Task DeleteMessageAsync(Guid id)
         {
             var message = await _dbContext.Messages.FindAsync(id);
             if (message != null)
@@ -55,9 +55,9 @@ namespace MessengerServer.Repositories
             }
         }
 
-        public bool MessageExists(int id)
+        public bool MessageExists(Guid id)
         {
-            return _dbContext.Messages.Any(m => m.MessageId == id);
+            return _dbContext.Messages.Any(m => m.Id == id);
         }
     }
 }

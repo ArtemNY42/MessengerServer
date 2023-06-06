@@ -28,7 +28,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Chat>> GetChatById(int id)
+        public async Task<ActionResult<Chat>> GetChatById(Guid id)
         {
             var chat = await _chatRepository.GetChatByIdAsync(id);
 
@@ -44,13 +44,13 @@ namespace MessengerServer.Controllers
         public async Task<ActionResult<Chat>> CreateChat(Chat chat)
         {
             var createdChat = await _chatRepository.CreateChatAsync(chat);
-            return CreatedAtAction(nameof(GetChatById), new { id = createdChat.ChatId }, createdChat);
+            return CreatedAtAction(nameof(GetChatById), new { id = createdChat.Id }, createdChat);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateChat(int id, Chat chat)
+        public async Task<IActionResult> UpdateChat(Guid id, Chat chat)
         {
-            if (id != chat.ChatId)
+            if (id != chat.Id)
             {
                 return BadRequest();
             }
@@ -61,7 +61,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteChat(int id)
+        public async Task<IActionResult> DeleteChat(Guid id)
         {
             var chatExists = _chatRepository.ChatExists(id);
             if (!chatExists)

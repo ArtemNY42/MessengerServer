@@ -28,7 +28,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public async Task<ActionResult<User>> GetUserById(Guid id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
 
@@ -44,13 +44,13 @@ namespace MessengerServer.Controllers
         public async Task<ActionResult<User>> CreateUser(User user)
         {
             var createdUser = await _userRepository.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.UserId }, createdUser);
+            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        public async Task<IActionResult> UpdateUser(Guid id, User user)
         {
-            if (id != user.UserId)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
@@ -61,7 +61,7 @@ namespace MessengerServer.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             var userExists = _userRepository.UserExists(id);
             if (!userExists)

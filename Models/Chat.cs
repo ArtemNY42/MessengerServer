@@ -6,12 +6,17 @@ namespace MessengerServer.Models
     public class Chat
     {
         [Key]
-        public int ChatId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        // Define the relationship with the participants (Users)
-        public ICollection<User>? Participants { get; set; }
+        [Required]
+        public Guid CreatorId { get; set; }
+
+        [Required]
+        public DateTime DateCreate { get; set; }
+
+        public List<User>? Participants { get; set; }
     }
 }

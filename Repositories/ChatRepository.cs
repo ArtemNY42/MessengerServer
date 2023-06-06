@@ -22,9 +22,9 @@ namespace MessengerServer.Repositories
             return await _dbContext.Chats.Include(c => c.Participants).ToListAsync();
         }
 
-        public async Task<Chat> GetChatByIdAsync(int id)
+        public async Task<Chat> GetChatByIdAsync(Guid id)
         {
-            return await _dbContext.Chats.Include(c => c.Participants).FirstOrDefaultAsync(c => c.ChatId == id);
+            return await _dbContext.Chats.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Chat> CreateChatAsync(Chat chat)
@@ -40,7 +40,7 @@ namespace MessengerServer.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteChatAsync(int id)
+        public async Task DeleteChatAsync(Guid id)
         {
             var chat = await _dbContext.Chats.FindAsync(id);
             if (chat != null)
@@ -50,9 +50,9 @@ namespace MessengerServer.Repositories
             }
         }
 
-        public bool ChatExists(int id)
+        public bool ChatExists(Guid id)
         {
-            return _dbContext.Chats.Any(c => c.ChatId == id);
+            return _dbContext.Chats.Any(c => c.Id == id);
         }
     }
 }

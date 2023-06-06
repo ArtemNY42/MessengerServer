@@ -9,7 +9,7 @@ namespace MessengerServer.Models
     public class User
     {
         [Key]
-        public int UserId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Email { get; set; }
@@ -17,9 +17,15 @@ namespace MessengerServer.Models
         [Required]
         public string Password { get; set; }
 
-        // Define the relationship with the Chats (Many-to-Many)
-        public ICollection<Chat>? Chats { get; set; }
+        [Required]
+        public string FirstName { get; set; }
 
-        // Add additional properties as needed
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        public DateTime RegistrationDate { get; set; }
+
+        public List<Chat>? Chats { get; set; }
     }
 }
