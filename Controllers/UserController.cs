@@ -20,58 +20,64 @@ namespace MessengerServer.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            var users = await _userRepository.GetAllUsersAsync();
-            return Ok(users);
-        }
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        // {
+        //     var users = await _userRepository.GetAllUsersAsync();
+        //     return Ok(users);
+        // }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(Guid id)
-        {
-            var user = await _userRepository.GetUserByIdAsync(id);
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<User>> GetUserById(Guid id)
+        // {
+        //     var user = await _userRepository.GetUserByIdAsync(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+        //     if (user == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            return Ok(user);
-        }
+        //     return Ok(user);
+        // }
 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
+            if(user == null) return BadRequest("Input is null!");
+            if(_userRepository.UserValid(user)) return BadRequest("User alredy exist!");
             var createdUser = await _userRepository.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+            if (createdUser == null)
+            {
+                return BadRequest("Error while creating user!");
+            }
+            else return createdUser;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, User user)
+        [HttpPut]
+        public async Task<ActionResult<User>> UpdateUser(User user)
         {
-            if (id != user.Id)
+            if (user.Email == null || user.Password == null) return BadRequest("Input user is null!");
+            if(!_userRepository.UserValid(user)) return BadRequest("Invalid user login or password!");
+
+            user = await _userRepository.UpdateUserAsync(user);
+
+            if (user == null)
             {
-                return BadRequest();
+                return BadRequest("Error while updating user!");
             }
-
-            await _userRepository.UpdateUserAsync(user);
-
-            return NoContent();
+            else return user;
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(User user)
         {
-            var userExists = _userRepository.UserExists(id);
-            if (!userExists)
-            {
-                return NotFound();
-            }
+            if(!_userRepository.UserValid(user)) return BadRequest("Invalid user login or password!");
+            if (!_userRepository.UserExists(user.Id)) return NotFound();
 
-            await _userRepository.DeleteUserAsync(id);
+            await _userRepository.DeleteUserAsync(user.Id);
 
-            return NoContent();
+            if (!_userRepository.UserExists(user.Id)) return Ok();
+            else return BadRequest("Error while deleting user!");
         }
     }
 }

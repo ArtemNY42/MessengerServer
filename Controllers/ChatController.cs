@@ -14,10 +14,12 @@ namespace MessengerServer.Controllers
     public class ChatController : ControllerBase
     {
         private readonly ChatRepository _chatRepository;
+        private readonly UserRepository _userRepository;
 
-        public ChatController(ChatRepository chatRepository)
+        public ChatController(ChatRepository chatRepository, UserRepository userRepository)
         {
             _chatRepository = chatRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]

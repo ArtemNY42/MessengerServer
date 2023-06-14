@@ -29,15 +29,18 @@ namespace MessengerServer.Repositories
 
         public async Task<User> CreateUserAsync(User user)
         {
+            if(user.RegistrationDate == DateTime.MinValue) user.RegistrationDate = DateTime.Now;
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
             return user;
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<User> UpdateUserAsync(User user)
         {
+
             _dbContext.Entry(user).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
+            return user;
         }
 
         public async Task DeleteUserAsync(Guid id)
@@ -53,6 +56,11 @@ namespace MessengerServer.Repositories
         public bool UserExists(Guid id)
         {
             return _dbContext.Users.Any(u => u.Id == id);
+        }
+
+        public bool UserValid(User user)
+        {
+            return _dbContext.Users.Any(u => user.Email == u.Email && user.Password == u.Password);
         }
     }
 }

@@ -21,6 +21,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<ChatRepository>();
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var app = builder.Build();
 
